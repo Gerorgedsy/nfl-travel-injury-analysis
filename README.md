@@ -1,2 +1,5 @@
 # nfl-travel-injury-analysis
-Analyzing the relationship between NFL team travel and player injuries.
+Analyzing the common factors causing player injuries.
+
+## Data
+To load all required data, run Data/data_load.py. To access stadium data please download the CSV from: https://github.com/greerreNFL/Stadiums/blob/main/data/stadiums.csv.
