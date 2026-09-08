@@ -1,0 +1,6 @@
+pandas
+numpy
+nflreadpy
+matplotlib
+seaborn
+pyarrow
