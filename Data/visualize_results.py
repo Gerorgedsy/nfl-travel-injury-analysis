@@ -26,7 +26,7 @@ plt.figure(figsize=(10, 6))
 
 bars = plt.bar(
     travel["travel_bin"],
-    travel["avg_injured_players"]
+    travel["avg_new_injuries"]
 )
 
 plt.title(
@@ -37,9 +37,9 @@ plt.title(
 plt.xlabel("Travel distance")
 plt.ylabel("Average players on injury report")
 
-plt.ylim(0, max(travel["avg_injured_players"]) * 1.15)
+plt.ylim(0, max(travel["avg_new_injuries"]) * 1.15)
 
-for bar, value in zip(bars, travel["avg_injured_players"]):
+for bar, value in zip(bars, travel["avg_new_injuries"]):
     plt.text(
         bar.get_x() + bar.get_width() / 2,
         bar.get_height() + 0.12,
@@ -67,7 +67,7 @@ away = analysis[
 ].copy()
 
 x = away["travel_distance_miles"].to_numpy()
-y = away["injured_players"].to_numpy()
+y = away["new_injuries"].to_numpy()
 
 correlation = np.corrcoef(x, y)[0, 1]
 
@@ -124,16 +124,16 @@ plt.close()
 
 top10 = (
     stadiums
-    .sort_values("avg_injured_players", ascending=False)
+    .sort_values("avg_new_injuries", ascending=False)
     .head(10)
-    .sort_values("avg_injured_players")
+    .sort_values("avg_new_injuries")
 )
 
 plt.figure(figsize=(11, 7))
 
 bars = plt.barh(
     top10["stadium_name"],
-    top10["avg_injured_players"]
+    top10["avg_new_injuries"]
 )
 
 plt.title(
@@ -144,7 +144,7 @@ plt.title(
 plt.xlabel("Average players on injury report")
 plt.ylabel("Stadium")
 
-for bar, value in zip(bars, top10["avg_injured_players"]):
+for bar, value in zip(bars, top10["avg_new_injuries"]):
     plt.text(
         bar.get_width() + 0.05,
         bar.get_y() + bar.get_height() / 2,
@@ -177,7 +177,7 @@ plt.figure(figsize=(7, 6))
 
 bars = plt.bar(
     surface_clean["surface_type"],
-    surface_clean["avg_injured_players"]
+    surface_clean["avg_new_injuries"]
 )
 
 plt.title(
@@ -190,12 +190,12 @@ plt.ylabel("Average players on injury report")
 
 plt.ylim(
     0,
-    max(surface_clean["avg_injured_players"]) * 1.15
+    max(surface_clean["avg_new_injuries"]) * 1.15
 )
 
 for bar, value in zip(
     bars,
-    surface_clean["avg_injured_players"]
+    surface_clean["avg_new_injuries"]
 ):
     plt.text(
         bar.get_x() + bar.get_width() / 2,

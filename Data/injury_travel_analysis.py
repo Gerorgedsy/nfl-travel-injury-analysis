@@ -11,7 +11,15 @@ from math import radians, sin, cos, sqrt, atan2
 # 1. Load data
 # -----------------------------
 
-injuries = pd.read_csv("Data/injuries.csv", low_memory=False)
+injuries = pd.read_csv(
+    "Data/injuries_preprocessed.csv",
+    low_memory=False
+)
+
+# Keep only the first observation of each injury spell
+injuries = injuries[
+    injuries["is_new_spell"] == True
+].copy()
 schedules = pd.read_csv("Data/schedules.csv", low_memory=False)
 stadiums = pd.read_csv("Data/stadiums.csv", low_memory=False)
 
@@ -67,9 +75,9 @@ schedules["week"] = schedules["week"].astype(int)
 
 injury_counts = (
     injuries
-    .groupby(["season", "week", "team"])["gsis_id"]
-    .nunique()
-    .reset_index(name="injured_players")
+    .groupby(["season", "week", "team"])
+    .size()
+    .reset_index(name="new_injuries")
 )
 
 print("\n=== INJURY COUNTS ===")
@@ -170,8 +178,8 @@ analysis = team_games.merge(
     how="left"
 )
 
-analysis["injured_players"] = (
-    analysis["injured_players"]
+analysis["new_injuries"] = (
+    analysis["new_injuries"]
     .fillna(0)
     .astype(int)
 )
@@ -280,8 +288,8 @@ travel_summary = (
     .groupby("travel_bin", observed=True)
     .agg(
         team_games=("game_id", "count"),
-        avg_injured_players=("injured_players", "mean"),
-        median_injured_players=("injured_players", "median")
+        avg_new_injuries=("new_injuries", "mean"),
+        median_new_injuries=("new_injuries", "median")
     )
     .reset_index()
 )
@@ -297,7 +305,7 @@ away_analysis = analysis[
 ].copy()
 
 travel_corr = away_analysis[
-    ["travel_distance_miles", "injured_players"]
+    ["travel_distance_miles", "new_injuries"]
 ].corr().iloc[0, 1]
 
 print("\nCorrelation between travel distance and injured players:")
@@ -325,8 +333,8 @@ stadium_summary = (
     )
     .agg(
         team_games=("game_id", "count"),
-        total_injured_players=("injured_players", "sum"),
-        avg_injured_players=("injured_players", "mean")
+        total_new_injuries=("new_injuries", "sum"),
+        avg_new_injuries=("new_injuries", "mean")
     )
     .reset_index()
 )
@@ -338,7 +346,7 @@ stadium_summary_filtered = (
         stadium_summary["team_games"] >= 20
     ]
     .sort_values(
-        "avg_injured_players",
+        "avg_new_injuries",
         ascending=False
     )
 )
@@ -352,7 +360,7 @@ print(
             "city",
             "state",
             "team_games",
-            "avg_injured_players"
+            "avg_new_injuries"
         ]
     ].head(15)
 )
@@ -368,11 +376,11 @@ state_summary = (
     .groupby("state")
     .agg(
         team_games=("game_id", "count"),
-        avg_injured_players=("injured_players", "mean")
+        avg_new_injuries=("new_injuries", "mean")
     )
     .reset_index()
     .sort_values(
-        "avg_injured_players",
+        "avg_new_injuries",
         ascending=False
     )
 )
@@ -391,11 +399,11 @@ surface_summary = (
     .groupby("surface_type")
     .agg(
         team_games=("game_id", "count"),
-        avg_injured_players=("injured_players", "mean")
+        avg_new_injuries=("new_injuries", "mean")
     )
     .reset_index()
     .sort_values(
-        "avg_injured_players",
+        "avg_new_injuries",
         ascending=False
     )
 )
@@ -410,11 +418,11 @@ roof_summary = (
     .groupby("roof_type")
     .agg(
         team_games=("game_id", "count"),
-        avg_injured_players=("injured_players", "mean")
+        avg_new_injuries=("new_injuries", "mean")
     )
     .reset_index()
     .sort_values(
-        "avg_injured_players",
+        "avg_new_injuries",
         ascending=False
     )
 )
